@@ -1,0 +1,8 @@
+---
+
+- name: start tuleap docker
+  docker_service:
+    project_src: /home/docker/tuleap
+  async: 120
+  poll: 10
+  when: not ansible_check_mode

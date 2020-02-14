@@ -1,0 +1,56 @@
+version: "2.1"
+  
+services:
+  tuleap:
+    image: enalean/tuleap-aio
+    container_name: tuleap
+    environment:
+      DB_HOST: "db"
+      MYSQL_ROOT_PASSWORD: "{{ tuleap_db_root_pass }}"
+      VIRTUAL_HOST: "{{ tuleap_url }}"
+    restart: unless-stopped
+    depends_on:
+      - db
+    networks:
+      default:
+      inverseproxy_shared:
+    volumes:
+      - data:/data
+
+    labels:
+      traefik.docker.network: "inverseproxy_shared"
+      traefik.enable: "true"
+      traefik.http.routers.tuleap-unsec.entrypoints: "http"
+      traefik.http.routers.tuleap-unsec.middlewares: "https-redirect@file"
+      traefik.http.routers.tuleap-unsec.rule: "Host(`{{ tuleap_url }}`)"
+      traefik.http.routers.tuleap.entrypoints: "https"
+      traefik.http.routers.tuleap.middlewares: "security-headers@file"
+      traefik.http.routers.tuleap.rule: "Host(`{{ tuleap_url }}`)"
+      traefik.http.routers.tuleap.service: "tuleap"
+      traefik.http.routers.tuleap.tls: "true"
+      traefik.http.routers.tuleap.tls.certresolver: "le"
+      traefik.http.routers.tuleap.tls.options: "default@file"
+      traefik.http.services.tuleap.loadbalancer.server.port: "80"
+
+  db:
+    image: mysql:5.6
+    container_name: tuleap_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: {{ tuleap_db_root_pass }}
+    volumes:
+      - db:/var/lib/mysql:z
+      - ./sql_mode.cnf:/etc/mysql/conf.d/sql_mode.cnf
+
+
+networks:
+    default:
+        internal: true
+        driver_opts:
+            encrypted: 1
+    inverseproxy_shared:
+        external: true
+
+volumes:
+    data:
+    db:
