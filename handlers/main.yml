@@ -1,7 +1,7 @@
 ---
 
 - name: start tuleap docker
-  docker_service:
+  docker_compose:
     project_src: /home/docker/tuleap
   async: 120
   poll: 10

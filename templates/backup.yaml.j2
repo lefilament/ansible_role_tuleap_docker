@@ -6,7 +6,6 @@ services:
             dockerfile: Dockerfile-mysql
         image: filament/duplicity:mysql
         hostname: backup-tuleap
-        domainname: "{{ tuleap_url }}"
         environment:
             DST: "swift://tuleap_{{ inventory_hostname|lower }}"
             MYSQL_DATABASE: "tuleap"
@@ -14,15 +13,15 @@ services:
             MYSQL_PASSWORD: "{{ tuleap_db_root_pass }}"
             MYSQL_USER: "root"
             PASSPHRASE: "{{ tuleap_db_root_pass }}"
-            SWIFT_USERNAME: "{{ swift_username }}"
-            SWIFT_PASSWORD: "{{ swift_password }}"
-            SWIFT_AUTHURL: "{{ swift_authurl }}"
-            SWIFT_AUTHVERSION: {{ swift_authversion }}
-            SWIFT_TENANTNAME: "{{ swift_tenantname }}"
-            SWIFT_TENANTID: "{{ swift_tenantid }}"
-            SWIFT_REGIONNAME: "{{ swift_regionname }}"
-            JOB_300_WHAT: "backup --full-if-older-than 6D"
-            JOB_301_WHAT: "dup remove-all-inc-of-but-n-full 4 --force $$DST $$@"
+            SWIFT_USERNAME: "{{ swift_odoo_username }}"
+            SWIFT_PASSWORD: "{{ swift_odoo_password }}"
+            SWIFT_AUTHURL: "{{ swift_odoo_authurl }}"
+            SWIFT_AUTHVERSION: {{ swift_odoo_authversion }}
+            SWIFT_TENANTNAME: "{{ swift_odoo_tenantname }}"
+            SWIFT_TENANTID: "{{ swift_odoo_tenantid }}"
+            SWIFT_REGIONNAME: "{{ swift_odoo_regionname }}"
+            JOB_300_WHAT: "backup --full-if-older-than 7D"
+            JOB_301_WHAT: "dup remove-all-inc-of-but-n-full 1 --force $$DST $$@"
             JOB_301_WHEN: "daily"
             JOB_302_WHAT: "dup remove-all-but-n-full 4 --force $$DST $$@"
             JOB_302_WHEN: "daily"
@@ -36,8 +35,6 @@ services:
 
 networks:
     tuleap_default:
-        driver_opts:
-            encrypted: 1
         external: true
     public:
         driver_opts:

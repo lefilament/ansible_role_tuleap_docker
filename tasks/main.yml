@@ -13,7 +13,7 @@
     dest: /home/docker/tuleap/sql_mode.cnf
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
 
 - name: Install tuleap docker
   template:
@@ -21,7 +21,7 @@
     dest: /home/docker/tuleap/docker-compose.yaml
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   notify: 
     - start tuleap docker
 
@@ -32,7 +32,7 @@
     dest: /home/docker/backups/backup-tuleap.yaml
     owner: root
     group: root
-    mode: 0400
+    mode: '0400'
   when: inventory_hostname in groups['maintenance_contract']
 
 - name: Copy docker file for mysql duplicity
@@ -41,13 +41,13 @@
     dest: /home/docker/backups/Dockerfile-mysql
     owner: root
     group: root
-    mode: 0644
+    mode: '0644'
   when: inventory_hostname in groups['maintenance_contract']
 
 - name: add cron job to run backup every day
   cron:
     name: backup tuleap
-    minute: 03
-    hour: 4
+    minute: "03"
+    hour: "4"
     job: /usr/local/bin/docker-compose -f /home/docker/backups/backup-tuleap.yaml run --rm backup_tuleap 
   when: inventory_hostname in groups['maintenance_contract']
