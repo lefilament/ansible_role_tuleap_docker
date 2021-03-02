@@ -21,7 +21,7 @@ ansible_become_pass:
 ansible_port: 
 
 ## Tuleap configuration
-# Tuleap URL
+# Tuleap URL (only sub.domain without https:// in front)
 tuleap_url:
 # Tuleap DB
 tuleap_db_root_pass:
