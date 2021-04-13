@@ -23,7 +23,7 @@ services:
             JOB_300_WHAT: "backup --full-if-older-than 7D"
             JOB_301_WHAT: "dup remove-all-inc-of-but-n-full 1 --force $$DST $$@"
             JOB_301_WHEN: "daily"
-            JOB_302_WHAT: "dup remove-all-but-n-full 4 --force $$DST $$@"
+            JOB_302_WHAT: "dup remove-all-but-n-full 5 --force $$DST $$@"
             JOB_302_WHEN: "daily"
         volumes:
             - tuleap_data:/mnt/backup/src/tuleap:z
