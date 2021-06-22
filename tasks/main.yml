@@ -6,6 +6,7 @@
     state: directory
     owner: root
     group: root
+    mode: '0755'
 
 - name: copy mysql configuration file
   copy:
@@ -22,7 +23,7 @@
     owner: root
     group: root
     mode: '0400'
-  notify: 
+  notify:
     - start tuleap docker
 
 ## Backup tuleap section
@@ -30,6 +31,15 @@
   template:
     src: backup.yaml.j2
     dest: /home/docker/backups/backup-tuleap.yaml
+    owner: root
+    group: root
+    mode: '0400'
+  when: inventory_hostname in groups['maintenance_contract']
+
+- name: Install tuleap backup2 compose file
+  template:
+    src: backup2.yaml.j2
+    dest: /home/docker/backups/backup2-tuleap.yaml
     owner: root
     group: root
     mode: '0400'
@@ -49,5 +59,13 @@
     name: backup tuleap
     minute: "03"
     hour: "4"
-    job: /usr/local/bin/docker-compose -f /home/docker/backups/backup-tuleap.yaml run --rm backup_tuleap 
+    job: /usr/local/bin/docker-compose -f /home/docker/backups/backup-tuleap.yaml run --rm backup_tuleap
+  when: inventory_hostname in groups['maintenance_contract']
+
+- name: add cron job to run backup2 every day
+  cron:
+    name: backup2 tuleap
+    minute: "03"
+    hour: "7"
+    job: /usr/local/bin/docker-compose -f /home/docker/backups/backup2-tuleap.yaml run --rm backup_tuleap
   when: inventory_hostname in groups['maintenance_contract']
