@@ -5,7 +5,7 @@ services:
             context: .
             dockerfile: Dockerfile-mysql
         image: filament/duplicity:mysql
-        hostname: backup-tuleap
+        hostname: {{ inventory_hostname_short | lower | regex_replace('_','') }}-tuleap
         environment:
             DST: "swift://tuleap_{{ inventory_hostname|lower }}"
             MYSQL_DATABASE: "tuleap"
@@ -26,6 +26,7 @@ services:
             JOB_302_WHAT: "dup remove-all-but-n-full 5 --force $$DST $$@"
             JOB_302_WHEN: "daily"
         volumes:
+            - tuleap_backup_cache:/root/.cache/duplicity/
             - tuleap_data:/mnt/backup/src/tuleap:z
         networks:
             - tuleap_default
@@ -41,5 +42,6 @@ networks:
             encrypted: 1
 
 volumes:
+    tuleap_backup2_cache:
     tuleap_data:
         external: true
